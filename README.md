@@ -110,7 +110,7 @@ This project demonstrates a complete ML workflow from raw data to model evaluati
 - Implement XGBoost for improved performance
 - Perform hyperparameter tuning
 - Add cross-validation
-- Deploy the model using a web application
+- Deploy the model using a web applications and also deployement using the FastAPI 
 
 ---
 
