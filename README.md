@@ -1,124 +1,41 @@
-# 🏠 House Price Prediction - Machine Learning Project
+# House Price Prediction
+> In-depth regression analysis — without log transform on target
 
-## 📌 Overview
-This project focuses on predicting house prices using a complete end-to-end Machine Learning pipeline. It covers all key stages of a real-world ML workflow, including data cleaning, exploratory data analysis (EDA), feature engineering, feature selection, and model building.
+![Python](https://img.shields.io/badge/Python-3.x-blue) ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-orange) ![XGBoost](https://img.shields.io/badge/XGBoost-Regressor-green)
 
----
+A complete ML pipeline for predicting residential house prices — covering EDA, feature engineering, outlier handling, target encoding, and model comparison.
 
-## 📊 Dataset
-The dataset contains housing-related features such as:
-- Bedrooms, Bathrooms
-- Square footage (living area, lot, basement)
-- Floors, Condition, View
-- Location details (ZIP code)
-- Year built and renovation details
-- Waterfront availability
+## Dataset
+- 4,600 rows · 18 original features · 0 null values
+- Target: `price` (float64) · Location: Washington state, USA · 77 unique ZIP codes
 
----
+## Pipeline
+1. **Data loading & EDA** — shape, dtypes, value counts
+2. **Column pruning** — dropped `street`, `country`, `statezip`
+3. **Type conversions** — `date` → datetime, `city`/`zip_code` → category
+4. **Visualization** — histograms, box plots, scatter vs price, correlation heatmap
+5. **Feature engineering** — `has_basement`, `house_age`, `is_renovated`, `total_sqft`
+6. **Outlier handling** — bedrooms clipped, price capped at 99th percentile
+7. **Target encoding** — `zip_code` and `city` encoded as mean price per group
+8. **Leakage removal** — dropped `price_per_sqft` (derived from target)
+9. **Model training** — Linear Regression, Random Forest (×2), XGBoost with 5-fold CV
 
-## ⚙️ Data Preprocessing
+## Results
 
-### 🔹 Column Removal
-- Removed irrelevant and redundant columns such as `street`, `country`, and `sqft_above`
-- Eliminated multicollinearity by dropping highly correlated features
+| Model | Test R² | CV Mean R² |
+|---|---|---|
+| Linear Regression | ❌ (bug) | — |
+| Random Forest (OHE) | 0.664 | — |
+| Random Forest (Target Enc.) | 0.716 | 0.701 |
+| **XGBoost** | **0.724** | **0.683** |
 
-### 🔹 Feature Engineering
-- Extracted `zip_code` from `statezip`
-- Created `house_age` from `yr_built`
-- Created binary features:
-  - `has_basement`
-  - `is_renovated`
+## Key Learnings
+- Target encoding on `zip_code`/`city` significantly outperformed one-hot encoding
+- `price_per_sqft` caused data leakage (inflated R² to ~0.91) — correctly identified and removed
+- Log transform on price intentionally skipped — preserved as commented code for comparison
 
----
-
-## 📈 Exploratory Data Analysis (EDA)
-
-- Visualized distributions of all numerical features
-- Identified skewness and outliers using histograms and boxplots
-- Analyzed relationships between features and target (`price`) using scatter plots
-- Used correlation heatmap to identify important and redundant features
-
----
-
-## 🔥 Key Insights
-
-- `sqft_living` is the strongest predictor of house price
-- Location (`zip_code`) plays a significant role
-- Features like `waterfront` and `view` have strong impact despite low correlation values
-- Many features showed right-skewed distributions and required transformation
-- Outliers significantly affected the dataset and were handled accordingly
-
----
-
-## 🔄 Data Transformation
-
-- Applied **log transformation** to skewed features:
-  - `price`, `sqft_living`, `sqft_lot`, `sqft_basement`
-- Removed extreme outliers using quantile-based filtering
-- Converted categorical features (`zip_code`, `floors`) appropriately
-
----
-
-## 🎯 Feature Selection
-
-### ✅ Selected Features:
-- sqft_living, bathrooms, bedrooms
-- floors, waterfront, view, condition
-- sqft_basement, has_basement
-- house_age, is_renovated
-- zip_code
-
-### ❌ Removed Features:
-- sqft_above (high correlation)
-- yr_built, yr_renovated (replaced with engineered features)
-- sqft_lot (low predictive power)
-
----
-
-## 🤖 Model Building
-
-Implemented multiple regression models:
-- Linear Regression
-- Random Forest Regressor
-
----
-
-## 📊 Model Evaluation
-
-- Evaluated models using:
-  - R² Score
-  - Root Mean Squared Error (RMSE)
-
-- Random Forest performed better due to:
-  - Handling non-linear relationships
-  - Robustness to outliers and feature interactions
-
----
-
-## 🚀 Conclusion
-
-This project demonstrates a complete ML workflow from raw data to model evaluation. It highlights the importance of:
-- Proper feature engineering
-- Handling skewness and outliers
-- Understanding feature relationships
-- Selecting the right model
-
----
-
-## 🔮 Future Improvements
-
-- Implement XGBoost for improved performance
-- Perform hyperparameter tuning
-- Add cross-validation
-- Deploy the model using a web applications and also deployement using the FastAPI 
-
----
-
-## 🧠 Key Skills Demonstrated
-
-- Data Cleaning & Preprocessing  
-- Exploratory Data Analysis (EDA)  
-- Feature Engineering  
-- Feature Selection  
-- Regression Modeling  
-- Model Evaluation  
+## Setup
+```bash
+pip install pandas numpy seaborn matplotlib scikit-learn xgboost imbalanced-learn
+```
+Place `House_Prices.csv` in the same directory and run all cells.
